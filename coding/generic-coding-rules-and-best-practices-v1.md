@@ -9,6 +9,10 @@ Normally we follow an iterative approach when we write code.
 
 # Rules to keep
 
+In general please read the file [karpathy-guidelines.mdc](../3rd-party/karpathy-guidelines.mdc) when we are crafting code together.
+
+On the top of that also keep the following we define in this document!
+
 ## Comments
 
 - Always add at least brief comments to classes / structs explaining what they do. Keep it short!
