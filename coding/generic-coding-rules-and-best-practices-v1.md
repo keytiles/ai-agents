@@ -19,7 +19,10 @@ On the top of that also keep the following we define in this document!
 - Always add at least brief comments to methods explaining what they do.
 - Also do it for internal helper methods.
 - In longer methods provide inline brief comments so reader understands better which code block does what.
-- When you are adding comment to a method itself above the function (godoc, javadoc, etc), please do not add the name of the method into the comment - totally pointless. We see the method...
+- Do not repeat or add the name of the method to method comments. When you are adding comment to a method itself above the function (godoc, javadoc, etc) - totally pointless. We see the method...
+  example: if method name is "ensureMap()" then
+  - Bad: `// ensureMap allocates...`
+  - Good: `// Allocates the backing map if...`
 
 ## Unit test code
 
