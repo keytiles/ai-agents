@@ -12,6 +12,15 @@
 Planning documents.
 Please read [planning-documents-v1.md](../coding/planning-documents-v1.md) to understand what they are!
 
+They are related very often! Especially through the version number `-v<major>.<minor>-plan.md` part in the file name.
+
+- While work is tracked under an active `development-plans/.../xxx-v2.0-plan.md` plan (e.g. `development-plans/v2.0.0/review-enhancement-Sets-v2.0-plan.md`), the feature doc named by that plan (e.g. `docs/Sets-v2.0.md`) is the **current** doc for that release. Update it **in place** as phases land.
+- Do **not** bump to a new file such as `docs/Sets-v2.1.md` for additive slices inside the same unreleased plan / same library release. Grow the existing “What changed vs previous” section (vs the last released baseline, e.g. 1.2 → 2.0) instead.
+- Introduce a new `docs/<Feature>-vX.Y.md` only when:
+  - a new `development-plans/.../<Feature>-vX.Y-plan.md` cycle starts for that feature, **or**
+  - the user explicitly asks to version-bump the feature doc.
+- When unsure whether to create a new versioned doc file, **ask first**.
+
 ## Rules to keep
 
 When crafting / modifying a file stored here keep the following rules:
