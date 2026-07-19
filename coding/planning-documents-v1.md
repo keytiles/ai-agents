@@ -9,7 +9,9 @@ When we develop a feature / class / module we create a development plan document
 
 ## Where do we keep these documents?
 
-Each code repository has a folder `/development-plans`. We keep these files there. Further subfolders possible if further grouping of the features needed.
+Each code repository has a folder `/development-plans`. We keep these files there.
+
+Subfolders are allowed for grouping. A common pattern is **one subfolder per artifact release version** (e.g. `/development-plans/v2.0.0/`), so maintainers can see which plans belong to which target release. Feature-based subfolders are also fine.
 
 ## Format
 
