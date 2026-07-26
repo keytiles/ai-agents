@@ -1,3 +1,5 @@
+document version: 1.0
+
 # Documentation
 
 ## Structure

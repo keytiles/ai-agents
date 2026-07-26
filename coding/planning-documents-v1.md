@@ -1,3 +1,5 @@
+document version: 1.0
+
 # What are planning documents?
 
 When we develop a feature / class / module we create a development plan document which

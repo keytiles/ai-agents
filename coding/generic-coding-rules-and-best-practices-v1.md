@@ -1,3 +1,5 @@
+document version: 1.0
+
 # Iterative development workflow
 
 Normally we follow an iterative approach when we write code.
@@ -13,6 +15,11 @@ In general please read the file [karpathy-guidelines.mdc](../3rd-party/karpathy-
 
 On the top of that also keep the following we define in this document!
 
+## In general
+
+- Be sensitive for using deprecated code! If you spot this in exisitng code warn the user. When you craft code, don't use deprecated code but search for new version. It is often stated in
+  deprecation comments what is the new way.
+
 ## Comments
 
 - Always add at least brief comments to classes / structs explaining what they do. Keep it short!
@@ -26,8 +33,8 @@ On the top of that also keep the following we define in this document!
 
 ## Unit test code
 
-- Please keep BDD pattern (Gherkin language like) and organize test cases internals into GIVEN / WHEN / THEN segments - separated by comments.
-  This improves test readability drastically.
+- Please keep BDD pattern (Gherkin language like) and organize test cases internals into "---- GIVEN" / "---- WHEN" / "---- THEN" segments - separated by comments.
+  This improves test readability drastically. The "----" characters in the comments improve readability for human eye more.
 - Always add a short comment to all test cases (typically methods) about what they are testing.
 - Consider adding any inline comments which helps the reader to understand better what the test case does and make reverse engineering of the test case easier.
 
@@ -46,11 +53,14 @@ Please do NOT introduce internal helpers if:
 
 ## Logging
 
-- Keep logs consistent with existing style: `ecntx.LogWithLabels(logger).<Level>(...)`.
-- Use local `methodName := "..."` and include it in log messages.
-- Prefer lifecycle-oriented debug logs for internals: `started (...)` and `finished (...)` with compact, useful metrics.
+- Log levels: never use Critical/Fatal log levels! Valid log levels are:
+  - ERROR: business transaction failed, no recovery possible - we raise an exception/error for caller
+  - WARN: something went wrong but we have recovery plan, business transaction can continue
+  - INFO: Default log level setting in Production. To answer question "why the code did what it did?" INFO level logs should be sufficient to have.
+  - DEBUG: Extra information to enable way more insights in terms of what the code did.
+- We use hierarchical logging. A Logger created with `GetLogger(<name>)` factory method should be identified with package + class/struct/block name. So we know which code piece
+  created the log event.
+- We use structured logging. We decorate each log event with meta data. This possibility can be considered while crafting logs.
+- Prefer lifecycle-oriented DEBUG logs for internals: `started (...)` and `finished (...)` with compact, useful metrics.
 - Avoid duplicate/redundant logs for the same step; one strong signal is better than two weak ones.
-- Be explicit with key fields for large or sensitive payloads.
-- `kt_utils.VarPrinter{TheVar: ...}` is a good alternative for small/compact structs when it improves readability and maintainability.
-- Be careful with `VarPrinter` on large/deep objects: it can create noisy logs and unnecessary overhead.
-- For shared helper code, pass logger through the method contract early, even if logging is minimal at first, so future diagnostics are easy to add.
+- For shared or static helper code, pass logger through the method contract early, even if logging is minimal at first, so future diagnostics are easy to add.

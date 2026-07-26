@@ -1,3 +1,5 @@
+document version: 1.0
+
 # How to write Go code?
 
 Please read [generic-coding-rules-and-best-practices-v1.md](generic-coding-rules-and-best-practices-v1.md)!
@@ -21,6 +23,8 @@ It is a good practice to take `ecntx *kt_tracing.ExecutionContext` parameter int
 - This way we can not test package private methods or access package private fields. This is accepted. However what we can do - inspired by Java/Google lib @VisibleForTesting annotation - when we really need to test an internal method or internal anything, we can introduce methods with "VisibleForTesting\_" prefix in the code which can wrap internal logic making them visible for test cases.
 
 ## Logging
+
+Keep generic logging rules and on top of that keep these too:
 
 - Keep logs consistent with existing style: `ecntx.LogWithLabels(logger).<Level>(...)` if `ecntx *kt_tracing.ExecutionContext` is available for the method defined
   in module git.keytiles.com/keytiles-golang/lib-common-golang.
