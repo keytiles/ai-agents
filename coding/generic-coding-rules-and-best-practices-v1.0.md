@@ -1,4 +1,4 @@
-document version: 1.1
+document version: 1.0
 
 # Iterative development workflow
 
@@ -15,15 +15,10 @@ In general please read the file [karpathy-guidelines.mdc](../3rd-party/karpathy-
 
 On the top of that also keep the following we define in this document!
 
-## Deprecated APIs and symbols
+## In general
 
-Treat deprecation as a hard constraint when writing or changing code.
-
-- **Do not use** symbols marked `Deprecated` / `@deprecated` / similar (constants, types, functions, methods, packages).
-- Before using a constant, type, or API from a dependency (especially error codes, builders, helpers), **check its godoc / docs for a deprecation note**.
-- If deprecated, use the **replacement named in the deprecation comment**. Prefer the correctly spelled / current symbol even when an old alias still compiles.
-- If you find deprecated usage in **existing** code you are touching: warn the user and prefer migrating that call site in the same change when it is cheap and in scope.
-- Do **not** treat “it still compiles / same underlying value” as permission to keep using the deprecated alias.
+- Be sensitive for using deprecated code! If you spot this in exisitng code warn the user. When you craft code, don't use deprecated code but search for new version. It is often stated in
+  deprecation comments what is the new way.
 
 ## Comments
 
