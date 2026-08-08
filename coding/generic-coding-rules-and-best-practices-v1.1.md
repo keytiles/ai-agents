@@ -1,4 +1,4 @@
-document version: 1.2
+document version: 1.1
 
 # Iterative development workflow
 
@@ -38,15 +38,8 @@ Treat deprecation as a hard constraint when writing or changing code.
 
 ## Unit test code
 
-Please keep BDD pattern (Gherkin language like). Prefer this structure:
-
-- **Feature / area under test** → one test function / test method (with a short comment on what it covers).
-- **Scenario** → when the language supports subtests / nested cases, prefer splitting multiple scenarios that way
-  (in Go: `t.Run("scenario name", func(t *testing.T) { ... })`). This maps cleanly to Gherkin Scenarios and improves failure output / selective runs.
-- **Steps inside a Scenario** → organize with `"---- GIVEN"` / `"---- WHEN"` / `"---- THEN"` comment segments.
-  This improves test readability drastically. The `"----"` characters in the comments improve readability for human eye more.
-- Scenario names should read like behavior (e.g. `"named types are accepted"`), not like implementation details.
-- A single tiny case does not require a nested scenario wrapper — use judgment; prefer scenarios when a feature has several distinct behaviors.
+- Please keep BDD pattern (Gherkin language like) and organize test cases internals into "---- GIVEN" / "---- WHEN" / "---- THEN" segments - separated by comments.
+  This improves test readability drastically. The "----" characters in the comments improve readability for human eye more.
 - Always add a short comment to all test cases (typically methods) about what they are testing.
 - Consider adding any inline comments which helps the reader to understand better what the test case does and make reverse engineering of the test case easier.
 

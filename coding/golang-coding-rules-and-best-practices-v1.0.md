@@ -1,4 +1,4 @@
-document version: 1.1
+document version: 1.0
 
 # How to write Go code?
 
@@ -21,7 +21,6 @@ It is a good practice to take `ecntx *kt_tracing.ExecutionContext` parameter int
 
 - We break Golang best practices and do NOT mix test cases/code with real code. Real code is kept under folder `/pkg` where sub folders breaking up code into packages. And we have `/tests` folder where we put test code. Here we keep the same sub folder structure as we have under `/pkg` preferably.
 - This way we can not test package private methods or access package private fields. This is accepted. However what we can do - inspired by Java/Google lib @VisibleForTesting annotation - when we really need to test an internal method or internal anything, we can introduce methods with "VisibleForTesting\_" prefix in the code which can wrap internal logic making them visible for test cases.
-- Prefer `t.Run("scenario name", ...)` to split **Scenarios** under one `Test_…` feature / area (see generic unit-test rules). This gives clearer failures and supports `go test -run 'TestFoo/scenario'`. Keep `---- GIVEN` / `---- WHEN` / `---- THEN` inside each `t.Run`. A single tiny scenario does not require `t.Run` — use judgment.
 
 ## Logging
 
