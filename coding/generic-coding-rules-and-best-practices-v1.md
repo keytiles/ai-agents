@@ -1,4 +1,4 @@
-document version: 1.2
+document version: 1.1
 
 # Iterative development workflow
 
@@ -46,8 +46,9 @@ Please keep BDD pattern (Gherkin language like). Prefer this structure:
 - **Steps inside a Scenario** → organize with `"---- GIVEN"` / `"---- WHEN"` / `"---- THEN"` comment segments.
   This improves test readability drastically. The `"----"` characters in the comments improve readability for human eye more.
 - Scenario names should read like behavior (e.g. `"named types are accepted"`), not like implementation details.
+- Do **not** add a Scenario comment that only repeats the scenario name. Prefer a strong name; add a short comment above the Scenario only when the name is not enough (why / non-obvious edge / important constraint).
 - A single tiny case does not require a nested scenario wrapper — use judgment; prefer scenarios when a feature has several distinct behaviors.
-- Always add a short comment to all test cases (typically methods) about what they are testing.
+- Always add a short comment to Feature-level test cases (typically the outer test method/function) about what they are testing.
 - Consider adding any inline comments which helps the reader to understand better what the test case does and make reverse engineering of the test case easier.
 
 # Best practices to keep

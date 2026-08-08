@@ -14,10 +14,12 @@ Full versioning / linking policy: see [README.md](README.md) (“How we version 
 # 2026-08-08
 
 - **Versioning policy** — documented head + snapshot + date changelog approach in README; this CHANGELOG introduced.
-- **coding/generic-coding-rules-and-best-practices-v1.md** (`document version: 1.2`; snapshot of previous head: `…-v1.1.md`)
+- **coding/generic-coding-rules-and-best-practices-v1.md** (`document version: 1.1`; previous freeze: `…-v1.0.md`)
   - Clarified BDD test structure: Feature → Scenario → steps
   - Prefer language subtests / nested cases for Scenarios when available
   - Keep `---- GIVEN` / `---- WHEN` / `---- THEN` inside each Scenario
+  - Scenario comments: do not repeat the scenario name; comment only when the name is not enough
+  - Clarified that the mandatory short test comment applies to Feature-level tests
 - **coding/golang-coding-rules-and-best-practices-v1.md** (`document version: 1.1`; snapshot of previous head: `…-v1.0.md`)
   - Prefer `t.Run("scenario name", …)` to split Scenarios under one `Test_…`
   - Keep GIVEN/WHEN/THEN inside each `t.Run`; optional for a single tiny case
