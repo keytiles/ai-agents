@@ -1,4 +1,4 @@
-document version: 1.1
+document version: 1.2
 
 # Iterative development workflow
 
