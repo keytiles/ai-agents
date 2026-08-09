@@ -11,6 +11,10 @@ Full versioning / linking policy: see [README.md](README.md) (“How we version 
 
 ---
 
+# 2026-08-09
+- Added the very first Keytiles pattern [Keytiles golang-pattern-source-anchoring-v1.md](coding/keytiles-patterns/golang-pattern-source-anchoring-v1.md) after polished this
+  with help of AI agent iteratively. Now this pattern seems to be well understood enough by agents so added as global. BUT not linked in to global coding rules here yet!
+
 # 2026-08-08
 
 - **Versioning policy** — documented head + snapshot + date changelog approach in README; this CHANGELOG introduced.
