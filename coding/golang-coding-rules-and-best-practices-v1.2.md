@@ -1,4 +1,4 @@
-document version: 1.3
+document version: 1.2
 
 # How to write Go code?
 
@@ -41,26 +41,7 @@ Keep generic logging rules and on top of that keep these too:
 - Use local `methodName := "..."` and include it in log messages.
 - Prefer lifecycle-oriented debug logs for internals: `started (...)` and `finished (...)` with compact, useful metrics.
 - Avoid duplicate/redundant logs for the same step; one strong signal is better than two weak ones.
-- For shared helper code, pass logger through the method contract early, even if logging is minimal at first, so future diagnostics are easy to add.
 - Be explicit with key fields for large or sensitive payloads.
-- Prefer `kt_utils.VarPrinter{TheVar: ...}` in log lines when you want readable dumps **without eager string construction** — the dump is built only when the logger actually formats the `%s` argument (e.g. log level allows emission). Do **not** call `kt_utils.PrintVarS(...)` inline in log argument lists for the same reason.
-- `VarPrinter` works well for small/compact structs when it improves readability and maintainability.
-- For **`[]byte` text payloads** (JSON, plain text, etc.) use lazy conversion via the flag — do **not** convert at the call site:
-  - **Good:** `kt_utils.VarPrinter{TheVar: bytes, BytesAsString: true}`
-  - **Bad:** `kt_utils.VarPrinter{TheVar: string(bytes)}` — `string(bytes)` runs eagerly before the logger decides to emit the line.
-- `BytesAsString` is **opt-in** and only applies when `TheVar` is `[]byte`. For binary payloads where you want litter's native `[]uint8{...}` dump, pass raw `[]byte` without the flag: `kt_utils.VarPrinter{TheVar: bytes}`.
+- `kt_utils.VarPrinter{TheVar: ...}` is a good alternative for small/compact structs when it improves readability and maintainability.
 - Be careful with `VarPrinter` on large/deep objects: it can create noisy logs and unnecessary overhead.
-- Feature details: `lib-utils-golang` docs `VarPrinting-v1.3.md` (or latest `VarPrinting-v*.md` in that repo).
-
-### VarPrinter in logs (lib-utils-golang)
-
-Use `kt_utils.VarPrinter` so formatting work is deferred until the log line is emitted.
-
-| Case | Pattern |
-|------|---------|
-| Struct / general value | `VarPrinter{TheVar: value}` |
-| `[]byte` as readable text | `VarPrinter{TheVar: bytes, BytesAsString: true}` |
-| `[]byte` as byte dump | `VarPrinter{TheVar: bytes}` (no flag) |
-| Avoid in log lines | `PrintVarS(...)` or `VarPrinter{TheVar: string(bytes)}` |
-
-Requires `lib-utils-golang/v2` **2.1.0+** for `BytesAsString`.
+- For shared helper code, pass logger through the method contract early, even if logging is minimal at first, so future diagnostics are easy to add.
