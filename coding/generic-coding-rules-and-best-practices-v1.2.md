@@ -1,4 +1,4 @@
-document version: 1.3
+document version: 1.2
 
 # Iterative development workflow
 
@@ -30,7 +30,6 @@ Treat deprecation as a hard constraint when writing or changing code.
 - Always add at least brief comments to classes / structs explaining what they do. Keep it short!
 - Always add at least brief comments to methods explaining what they do.
 - Also do it for internal helper methods.
-- **Feature-level test functions** (e.g. outer `func Test_…` in Go) count as methods here — see [Unit test code](#unit-test-code) (mandatory short comment on what the Feature covers).
 - In longer methods provide inline brief comments so reader understands better which code block does what.
 - Do not repeat or add the name of the method to method comments. When you are adding comment to a method itself above the function (godoc, javadoc, etc) - totally pointless. We see the method...
   example: if method name is "ensureMap()" then
@@ -49,14 +48,8 @@ Please keep BDD pattern (Gherkin language like). Prefer this structure:
 - Scenario names should read like behavior (e.g. `"named types are accepted"`), not like implementation details.
 - Do **not** add a Scenario comment that only repeats the scenario name. Prefer a strong name; add a short comment above the Scenario only when the name is not enough (why / non-obvious edge / important constraint).
 - A single tiny case does not require a nested scenario wrapper — use judgment; prefer scenarios when a feature has several distinct behaviors.
-- Always add a short comment to Feature-level test cases (typically the outer test method/function) about what they are testing. In Go this is the comment above `func Test_…(t *testing.T)` — **required**, not optional when scenarios exist inside.
+- Always add a short comment to Feature-level test cases (typically the outer test method/function) about what they are testing.
 - Consider adding any inline comments which helps the reader to understand better what the test case does and make reverse engineering of the test case easier.
-
-### Unit test checklist (before finishing)
-
-- [ ] Each Feature-level test (outer test method / `func Test_…` in Go) has a short comment stating what it covers
-- [ ] Scenarios have clear behavior-oriented names; `---- GIVEN` / `---- WHEN` / `---- THEN` where helpful
-- [ ] No comment that only duplicates a scenario name
 
 # Best practices to keep
 
