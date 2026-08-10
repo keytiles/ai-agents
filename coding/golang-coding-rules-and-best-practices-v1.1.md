@@ -1,4 +1,4 @@
-document version: 1.2
+document version: 1.1
 
 # How to write Go code?
 
@@ -6,15 +6,6 @@ Please read [generic-coding-rules-and-best-practices-v1.md](generic-coding-rules
 We need to keep all stadards and best practices described there.
 
 On the top of them please also keep the following!
-
-## Keytiles patterns
-
-Also read and follow these Keytiles pattern documents (all of them):
-
-- [golang-pattern-codebase-naming-v1.md](keytiles-patterns/golang-pattern-codebase-naming-v1.md) — **Codebase Naming** (`CODEBASE_NAME` / `PACKAGE_NAME`)
-- [golang-pattern-source-anchoring-v1.md](keytiles-patterns/golang-pattern-source-anchoring-v1.md) — **Source Anchoring** (`methodName` / `fullyQualifiedName` for logs, faults, call stacks; depends on Codebase Naming)
-
-When the user names a pattern (e.g. “source anchoring pattern”, “codebase naming pattern”), use the matching document above as the definition.
 
 ## Functional programming - ExecutionContext
 
