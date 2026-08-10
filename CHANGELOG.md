@@ -11,6 +11,11 @@ Full versioning / linking policy: see [README.md](README.md) (“How we version 
 
 ---
 
+# 2026-08-10
+- Added [golang-pattern-codebase-naming-v1.md](coding/keytiles-patterns/golang-pattern-codebase-naming-v1.md) (`document version: 1.0`) — **Codebase Naming** (`CODEBASE_NAME` / `PACKAGE_NAME`), including bootstrap when constants/files are missing; library → `keytiles.lib.<name>`, service → `service.<name>` (name from `go.mod`; ask library-vs-service when unclear). Separated from Source Anchoring so agents can establish naming independently (prefer `CODEBASE_NAME` over `LIB_NAME`).
+- Updated [golang-pattern-source-anchoring-v1.md](coding/keytiles-patterns/golang-pattern-source-anchoring-v1.md) (`document version: 1.1`; previous freeze: `…-v1.0.md`) — requires Codebase Naming first; keeps `methodName` / `fullyQualifiedName` / logs / faults.
+- Updated [golang-coding-rules-and-best-practices-v1.md](coding/keytiles-patterns/golang-coding-rules-and-best-practices-v1.md) (`document version: 1.1`; previous freeze: `…-v1.0.md`) — lists Codebase Naming and Source Anchoring.
+
 # 2026-08-09
 - Added the very first Keytiles pattern [Keytiles golang-pattern-source-anchoring-v1.md](coding/keytiles-patterns/golang-pattern-source-anchoring-v1.md) after polished this
   with help of AI agent iteratively. Now this pattern seems to be well understood enough by agents so added as global. BUT not linked in to global coding rules here yet!

@@ -1,4 +1,4 @@
-document version: 1.1
+document version: 1.0
 
 # Source Anchoring pattern
 
@@ -6,25 +6,10 @@ This document defines the **Source Anchoring** pattern used at Keytiles.
 
 When someone says “source anchoring pattern” (or “Source Anchoring”), this is what they mean: every log, fault, and call-stack entry is anchored to a clear origin via `methodName` and (for object methods) `fullyQualifiedName`.
 
-## Prerequisites — Codebase Naming
-
-Source Anchoring assumes **[Codebase Naming](golang-pattern-codebase-naming-v1.md)** is already in place: a root `CODEBASE_NAME` and a per-package `PACKAGE_NAME`.
-
-If those constants (or files) are missing, establish them using Codebase Naming **first**, then apply this pattern. Do not invent ad-hoc origin strings here.
-
-Type-level origins build on that hierarchy:
-
-```
-CODEBASE_NAME                    // Codebase Naming
-  └── PACKAGE_NAME               // Codebase Naming
-        └── fullyQualifiedName   // this pattern (= PACKAGE_NAME + ".<TypeName>")
-```
-
 ## Scope / prerequisites
 
 - **`methodName` + log messages** — apply wherever Keytiles-style logging is used.
 - **`WithSource` / `AddCallerToCallStack`** — apply only in codebases that use `kt_errors.Fault` from [lib-errorhandling-golang](https://github.com/keytiles/lib-errorhandling-golang) (`NewFaultBuilder`, etc.). If that library is not imported, still apply method naming and log anchoring; skip the Fault-builder parts.
-- **`PACKAGE_NAME` / `CODEBASE_NAME`** — required via Codebase Naming (see above).
 
 ## methodName
 
@@ -56,8 +41,6 @@ fault = kt_errors.NewFaultBuilder(...).
 Do **not** use the old multi-segment form like `WithSource(PACKAGE_NAME, "TypeName", "Foo()")`.
 
 `AddCallerToCallStack(...)` follows the same split: package-level uses `(PACKAGE_NAME, methodName)`; object methods use `(receiver.fullyQualifiedName, methodName)`.
-
-Constructors that are package-level functions still use `PACKAGE_NAME` for `WithSource` / `AddCallerToCallStack`, even though they also create `fullyQualifiedName` for the new instance’s logger and later methods.
 
 ## Log messages: methodName first
 
