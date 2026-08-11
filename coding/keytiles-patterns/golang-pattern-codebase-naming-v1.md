@@ -10,7 +10,7 @@ When someone says “codebase naming pattern” (or “Codebase Naming”), this
 
 **Covers:** creating and wiring `CODEBASE_NAME` and `PACKAGE_NAME` when missing, and how they relate.
 
-**Does not cover:** `methodName`, log message shape, `WithSource` / call stacks, or type-level `fullyQualifiedName` — those belong to [Source Anchoring](golang-pattern-source-anchoring-v1.md).
+**Does not cover:** `methodName`, log message shape, `WithSource` / call stacks, or type-level `FQN_<TypeName>` — those belong to [Source Anchoring](golang-pattern-source-anchoring-v1.md).
 
 ## Name hierarchy
 

@@ -1,10 +1,10 @@
-document version: 1.1
+document version: 1.2
 
 # Source Anchoring pattern
 
 This document defines the **Source Anchoring** pattern used at Keytiles.
 
-When someone says “source anchoring pattern” (or “Source Anchoring”), this is what they mean: every log, fault, and call-stack entry is anchored to a clear origin via `methodName` and (for object methods) `fullyQualifiedName`.
+When someone says “source anchoring pattern” (or “Source Anchoring”), this is what they mean: every log, fault, and call-stack entry is anchored to a clear origin via `methodName` and (for object methods) `receiver.fullyQualifiedName`, where that field is initialized from a package-level `FQN_<TypeName>` constant.
 
 ## Prerequisites — Codebase Naming
 
@@ -15,9 +15,10 @@ If those constants (or files) are missing, establish them using Codebase Naming 
 Type-level origins build on that hierarchy:
 
 ```
-CODEBASE_NAME                    // Codebase Naming
-  └── PACKAGE_NAME               // Codebase Naming
-        └── fullyQualifiedName   // this pattern (= PACKAGE_NAME + ".<TypeName>")
+CODEBASE_NAME                         // Codebase Naming
+  └── PACKAGE_NAME                    // Codebase Naming
+        ├── FQN_<TypeName>            // this pattern (= PACKAGE_NAME + ".<TypeName>", package-level const)
+        └── receiver.fullyQualifiedName // set from FQN_<TypeName> in constructor
 ```
 
 ## Scope / prerequisites
@@ -34,12 +35,32 @@ At the start of each function/method that logs or builds faults, declare:
 methodName := "Foo()"
 ```
 
+## FQN_<TypeName> constants
+
+For each type whose methods log or build faults, declare a **package-level constant** in the same file as the type:
+
+```go
+const FQN_RelayEmailSender = PACKAGE_NAME + ".RelayEmailSender"
+```
+
+**Naming:** `FQN_<TypeName>` where `<TypeName>` is the Go type name (PascalCase), e.g. `FQN_RelayEmailSender`, `FQN_EmailMessageBuilder`.
+
+**Rules:**
+
+- One const per anchored type.
+- Expression must be a **constant expression**: `PACKAGE_NAME + ".<TypeName>"` — both parts compile-time known.
+- Keep `fullyQualifiedName string` on the struct for object methods.
+- Do **not** build it in the constructor with a local `name := "..."` variable and string concatenation — that is a runtime concat and allocates on every constructor call.
+- Initialize `fullyQualifiedName` from the constant in the constructor: `fullyQualifiedName: FQN_<TypeName>`.
+- Use `receiver.fullyQualifiedName` in object methods (`WithSource`, `AddCallerToCallStack`) so methods are decoupled from package-level symbols.
+- Reuse `FQN_<TypeName>` in constructors (e.g., for `kt_logging.GetLogger` and `fullyQualifiedName` assignment).
+
+Go constant-folds `PACKAGE_NAME + ".TypeName"` at compile time; the resulting string lives once in the binary’s read-only data. This is preferred over constructor-time concatenation.
+
 ## Fault WithSource
 
 - **Package-level function** (no receiver): `WithSource(PACKAGE_NAME, methodName)`
-- **Object method** (has receiver with `fullyQualifiedName`): `WithSource(receiver.fullyQualifiedName, methodName)`
-
-`fullyQualifiedName` is set in the constructor as `PACKAGE_NAME + ".TypeName"` and is also used for `kt_logging.GetLogger(...)`.
+- **Object method** (has receiver): `WithSource(receiver.fullyQualifiedName, methodName)` — the field must come from `FQN_<TypeName>`
 
 ```go
 // package-level
@@ -57,7 +78,104 @@ Do **not** use the old multi-segment form like `WithSource(PACKAGE_NAME, "TypeNa
 
 `AddCallerToCallStack(...)` follows the same split: package-level uses `(PACKAGE_NAME, methodName)`; object methods use `(receiver.fullyQualifiedName, methodName)`.
 
-Constructors that are package-level functions still use `PACKAGE_NAME` for `WithSource` / `AddCallerToCallStack`, even though they also create `fullyQualifiedName` for the new instance’s logger and later methods.
+Constructors that are package-level functions still use `PACKAGE_NAME` for their own `WithSource` / `AddCallerToCallStack` calls. In constructors, set `fullyQualifiedName: FQN_<TypeName>`.
+
+## Logger
+
+In constructors that create a logger for the type, pass the same package const:
+
+```go
+logger: kt_logging.GetLogger(FQN_RelayEmailSender),
+```
+
+Do **not** use ad-hoc concatenation such as `kt_logging.GetLogger(PACKAGE_NAME + "." + name)` or hardcoded prefixes like `kt_logging.GetLogger("keytiles.kt_email." + name)`.
+
+## Examples
+
+### Type with constructor and logger
+
+```go
+const FQN_RelayEmailSender = PACKAGE_NAME + ".RelayEmailSender"
+
+type RelayEmailSender struct {
+    logger *kt_logging.Logger
+    name   string // keep if used for metrics etc.; not for source anchoring
+    fullyQualifiedName string
+    // ...
+}
+
+func NewRelayEmailSender(cfg EmailDeliveryConfig) *RelayEmailSender {
+    return &RelayEmailSender{
+        logger: kt_logging.GetLogger(FQN_RelayEmailSender),
+        name:   "RelayEmailSender",
+        fullyQualifiedName: FQN_RelayEmailSender,
+        // ...
+    }
+}
+
+func (sender *RelayEmailSender) Send(ecntx *kt_tracing.ExecutionContext, msg EmailMessage) kt_errors.Fault {
+    methodName := "Send()"
+    // ...
+    fault = kt_errors.NewFaultBuilder(kt_errors.ValidationFault).
+        WithSource(sender.fullyQualifiedName, methodName).
+        WithMessageTemplate("...").
+        Build()
+    fault.AddCallerToCallStack(sender.fullyQualifiedName, methodName)
+    // ...
+}
+```
+
+### Type without logger in constructor
+
+```go
+const FQN_EmailMessageBuilder = PACKAGE_NAME + ".EmailMessageBuilder"
+
+type EmailMessageBuilder struct {
+    fullyQualifiedName string
+    // ...
+}
+
+func NewEmailMessageBuilder() *EmailMessageBuilder {
+    return &EmailMessageBuilder{
+        fullyQualifiedName: FQN_EmailMessageBuilder,
+    }
+}
+
+func (builder *EmailMessageBuilder) Build() (EmailMessage, kt_errors.Fault) {
+    methodName := "Build()"
+    return EmailMessage{}, kt_errors.NewFaultBuilder(kt_errors.ValidationFault).
+        WithSource(builder.fullyQualifiedName, methodName).
+        WithMessageTemplate("...").
+        Build()
+}
+```
+
+## Upgrading earlier applications
+
+When you find code using constructor-time concat (`name := "..."`; `PACKAGE_NAME + "." + name`), upgrade it:
+
+1. Add `const FQN_<TypeName> = PACKAGE_NAME + ".<TypeName>"` at package level in the type’s file.
+2. Keep/add `fullyQualifiedName string` on the struct.
+3. Set `fullyQualifiedName: FQN_<TypeName>` in the constructor.
+4. Replace `kt_logging.GetLogger(PACKAGE_NAME + "." + name)` or other ad-hoc concat → `kt_logging.GetLogger(FQN_<TypeName>)`.
+5. Ensure methods use `receiver.fullyQualifiedName` in `WithSource` and `AddCallerToCallStack`.
+6. Remove constructor locals/concat code used to build the FQN dynamically.
+7. Rename legacy variants (e.g. `fullyQualifiedName_emailMessageBuilder`) → `FQN_EmailMessageBuilder` for constants.
+
+**Anti-patterns to remove:**
+
+```go
+// BAD — runtime concat in constructor
+name := "RelayEmailSender"
+fullyQualifiedName := PACKAGE_NAME + "." + name
+
+// BAD — hardcoded prefix + runtime concat
+kt_logging.GetLogger("keytiles.kt_email." + name)
+
+// GOOD — constant plus struct field initialized from it
+const FQN_RelayEmailSender = PACKAGE_NAME + ".RelayEmailSender"
+fullyQualifiedName: FQN_RelayEmailSender
+```
 
 ## Log messages: methodName first
 

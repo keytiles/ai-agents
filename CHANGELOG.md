@@ -11,6 +11,9 @@ Full versioning / linking policy: see [README.md](README.md) (“How we version 
 
 ---
 
+# 2026-08-11
+- Updated [golang-pattern-source-anchoring-v1.md](coding/keytiles-patterns/golang-pattern-source-anchoring-v1.md) (`document version: 1.2`; previous freeze: `…-v1.1.md`) — refined type-level origin anchoring: keep package-level `FQN_<TypeName>` constants, initialize `receiver.fullyQualifiedName` from those constants in constructors, and use `receiver.fullyQualifiedName` in object methods; still forbids runtime constructor concatenation.
+
 # 2026-08-10
 - Updated [generic-coding-rules-and-best-practices-v1.md](coding/generic-coding-rules-and-best-practices-v1.md) (`document version: 1.3`; previous freeze: `…-v1.2.md`) — **Unit tests:** Feature-level `Test_…` comments linked from Comments section; completion checklist; clarified Feature comment is required even when `t.Run` scenarios exist.
 - Updated [golang-coding-rules-and-best-practices-v1.md](coding/golang-coding-rules-and-best-practices-v1.md) (`document version: 1.4`; previous freeze: `…-v1.3.md`) — **Unit tests:** mandatory Feature-level comment on outer `func Test_…` with good/bad Go examples; unit-test checklist; explicit BDD Feature → `Test_…` mapping (so agents do not skip comments when only reading the Go section).
