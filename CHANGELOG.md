@@ -11,6 +11,9 @@ Full versioning / linking policy: see [README.md](README.md) (“How we version 
 
 ---
 
+# 2026-08-23
+- Updated [docs-rules-and-best-practices-v1.md](docs/docs-rules-and-best-practices-v1.md) (`document version: 1.1`; previous freeze: `…-v1.0.md`) — optional **`/docs-user`** folder for user-facing “how to use it” docs; versioning same as `/docs`; superseded files move to `/docs-user/archived-versions/`.
+
 # 2026-08-11
 - Updated [golang-pattern-source-anchoring-v1.md](coding/keytiles-patterns/golang-pattern-source-anchoring-v1.md) (`document version: 1.2`; previous freeze: `…-v1.1.md`) — refined type-level origin anchoring: keep package-level `FQN_<TypeName>` constants, initialize `receiver.fullyQualifiedName` from those constants in constructors, and use `receiver.fullyQualifiedName` in object methods; still forbids runtime constructor concatenation.
 

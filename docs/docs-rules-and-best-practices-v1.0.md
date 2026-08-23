@@ -1,25 +1,13 @@
-document version: 1.1
+document version: 1.0
 
 # Documentation
 
 ## Structure
 
-### Technical docs (`/docs`)
-
-- The code git repository has a folder named `/docs` — this is the place we keep **technical** documentation. Subfolders are possible if grouping certain feature docs together helps to structure the docs.
-- We document in Markdown format (`.md` files). These files describe how certain features / classes / modules are structured and work internally.
-- The files are versioned. We follow Semantic Versioning here — but without the patch version as we do not need that for docs.
-- File names follow the pattern: `<name of the thing>-v<major>.<minor>.md`
-
-### User-facing docs (`/docs-user`) — optional
-
-Not every repository needs this folder. Add it when a feature deserves **“how to use it”** documentation written from the **user’s perspective** — not how the code is built, but how someone consumes or operates the feature.
-
-- The code git repository may have a folder named `/docs-user` for this purpose. Subfolders are possible for grouping, same as `/docs`.
-- We document in Markdown format (`.md` files). Focus on tasks, workflows, examples, and outcomes the user cares about. Link to the matching technical doc in `/docs` when deeper implementation detail helps.
-- Versioning follows the same rules as `/docs`: Semantic Versioning without patch; file names `<name of the thing>-v<major>.<minor>.md`.
-- **Archive older versions to reduce noise:** only the **current** version of each doc lives in `/docs-user`. When you introduce a new version, **move** the superseded file into `/docs-user/archived-versions/` (keep the same file name). Do not leave old versions alongside the current one in the folder root.
-- The same self-contained and changelog-at-the-top rules in **Rules to keep** apply to user-facing docs too.
+- The code git repository has a folder named `/docs` - this is the place we keep the documentation. Subfolders possible if grouping of certain featue docs together helps to structure the docs.
+- We document in Markdown format .md files. These .md files are describing how certain features / classes / modules work.
+- The files are versioned. We follow Semantic Versioning here - but without the patch version as we do not need that for docs.
+- File names are following the pattern in `/docs` folder: "<name of the thing>-v<major>.<minor>.md"
 
 ## Companion docs
 
@@ -34,7 +22,6 @@ They are related very often! Especially through the version number `-v<major>.<m
   - a new `development-plans/.../<Feature>-vX.Y-plan.md` cycle starts for that feature, **or**
   - the user explicitly asks to version-bump the feature doc.
 - When unsure whether to create a new versioned doc file, **ask first**.
-- The same in-place vs bump rules apply to `/docs-user` docs. When you **do** bump a user-facing doc, move the old file to `/docs-user/archived-versions/`.
 
 ## Rules to keep
 
