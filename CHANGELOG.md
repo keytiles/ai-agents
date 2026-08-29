@@ -11,6 +11,9 @@ Full versioning / linking policy: see [README.md](README.md) (“How we version 
 
 ---
 
+# 2026-08-29
+- Added [java8-coding-rules-and-best-practices-v1.md](coding/java8-coding-rules-and-best-practices-v1.md) (`document version: 1.0`) — Java 8 language/API ceiling for agents; JUnit 4 BDD mapping (Feature = `@Test` method, numbered in-method Scenarios); Javadoc and parameterized (lazy) logging on top of generic rules.
+
 # 2026-08-23
 - Updated [docs-rules-and-best-practices-v1.md](docs/docs-rules-and-best-practices-v1.md) (`document version: 1.1`; previous freeze: `…-v1.0.md`) — optional **`/docs-user`** folder for user-facing “how to use it” docs; versioning same as `/docs`; superseded files move to `/docs-user/archived-versions/`.
 
