@@ -1,4 +1,4 @@
-document version: 1.1
+document version: 1.0
 
 # How to write Java 8 code?
 
@@ -83,38 +83,6 @@ JUnit 4 has no `t.Run` / `@Nested`. The house substitute is **numbered Scenario 
 - [ ] Multiple behaviors use numbered Scenario blocks (or a dedicated `@Test` if the scenario is large/standalone) with `---- GIVEN` / `---- WHEN` / `---- THEN`
 - [ ] Scenario headers have a behavior line when the number alone is not enough
 - [ ] Generic unit-test rules (Feature / Scenario / steps) are satisfied
-
-## jBehave integration tests (`.story` files)
-
-Keytiles Java projects use **jBehave** alongside JUnit for integration / HTTP / multi-component BDD tests.
-
-- **`.story` files** are plain-text scenarios (not Java). They describe **Given / When / Then** steps that Java *step* classes implement.
-- One story file usually pairs with one JUnit runner class (`…Test.java`) executed via `@RunWith(SwfJBehaveJUnitReportingRunner.class)` (or the runner already used in that module).
-- **Scenario:** lines are behavior titles. Follow the same BDD spirit as unit tests: name the behavior; add a `!--` comment when the title alone is not enough.
-- **Lifecycle:** (`Before:` / `After:`) blocks run shared setup/teardown for all scenarios in that story file.
-- Story comments use jBehave syntax: `!-- … --` (not `//` or `#`).
-- Reuse existing step phrases from neighbouring stories and composite step bundles; do not invent parallel step libraries.
-
-### ASCII-only in `.story` files (required)
-
-jBehave embeds story text into FreeMarker-based report generation. **Use ASCII only** in `.story` files (scenario titles, step text, and `!--` comments).
-
-Do **not** use Unicode punctuation such as em dash (`—`), arrows (`→`), smart quotes, or other non-ASCII characters.
-
-They can make report generation fail after the test run (e.g. `java.nio.charset.UnmappableCharacterException: Input length = 1`) when the reporter charset cannot encode them.
-
-Use ASCII substitutes: `--` or `-` instead of em dash; `->` instead of arrow; plain `"` quotes.
-
-### URLs in HTTP story steps
-
-In HTTP step tables, **URL-encode** query values that contain characters the URL parser treats specially (e.g. `clientTimezone=Europe%2FBerlin`, not `Europe/Berlin`).
-
-### jBehave checklist (before finishing)
-
-- [ ] `.story` file is ASCII-only (no em dash, arrows, smart quotes, or other non-ASCII)
-- [ ] Scenario titles name behavior; `!--` comments add context where needed
-- [ ] HTTP URLs in tables are properly encoded
-- [ ] Steps reuse existing phrases / composite bundles from the same module
 
 
 ## Logging

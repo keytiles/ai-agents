@@ -11,6 +11,9 @@ Full versioning / linking policy: see [README.md](README.md) (“How we version 
 
 ---
 
+# 2026-09-03
+- Updated [java8-coding-rules-and-best-practices-v1.md](coding/java8-coding-rules-and-best-practices-v1.md) (`document version: 1.1`; previous freeze: [java8-coding-rules-and-best-practices-v1.0.md](coding/java8-coding-rules-and-best-practices-v1.0.md)) — **jBehave:** `.story` file conventions; **ASCII-only** requirement (FreeMarker report generation); URL-encoding in HTTP steps; jBehave checklist.
+
 # 2026-08-29
 - Added [java8-coding-rules-and-best-practices-v1.md](coding/java8-coding-rules-and-best-practices-v1.md) (`document version: 1.0`) — Java 8 language/API ceiling for agents; JUnit 4 BDD mapping (Feature = `@Test` method, numbered in-method Scenarios); Javadoc and parameterized (lazy) logging on top of generic rules.
 
