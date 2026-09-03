@@ -32,7 +32,18 @@ This is not sustainable!
 I also found this youtube video in which it looks the guy actually arrived to something very very similar to what I have arrived to:
 [https://www.youtube.com/watch?v=h0hdaHPKDdI](https://www.youtube.com/watch?v=h0hdaHPKDdI) - "What 6 months of AI coding did to my dev team"
 
-# Current workflow
+# The workflow - high level
+
+On a high level we can split it to 3 phases:
+ 1. **Planning / discussion -> outcome is a document**: *-vx.y-plan.md versioned file.  
+    Containing all details / decisions / implementation steps / testing steps etc we discussed during the chat.
+ 2. **Implementation -> outcome is code changes**
+ 3. **Documentation -> outcome is document again:** *-vx.y.md versioned file.  
+    Documenting how the feature new version works technically after the change.
+
+That's it. And now we can iterate later again the same phases.
+
+# The workflow - in details
 
 Within the code (git) repo we create 3 folders:
  * `agents` - Place of .md files which containing instructions for agents. (There will be some twist here ;-))
@@ -86,7 +97,7 @@ You can watch these videos:
  * https://www.youtube.com/watch?v=8uf7ztjn4FA&list=PLNIT6bcXymvw&index=4
 
 
-## Step 2 - specification
+## Step 2 - specification / plan
 
 It's time to specify what I want!
 
@@ -192,21 +203,17 @@ Do not modify test cases for now - just the code. We deal with tests later.
 
 ## Document rules / best practices into standalone .md files
 
-When we work with the agent on code or on docs - see [Step 1](#step-1---preparation) or [Step 4](#step-4---documentation) - it is really handy to sit down once and craft an .md file in which you simply write down (try to be short, concise!) rules and best practices.
+Well, this is exactly this repository. :-) Not much details needed I think.
 
-I do it for:
-* coding rules
-* documentation rules
+## NOTE - automated contexts
 
-but you can do it literally for anything.
+Environments like Cursor absolutely allows you to put in rules into some folder like ".cursor/rules" or similar where files are always automatically picked up for each context. Generic approach is also adding `agents.md` file.
 
-Then you can simply tell the agent "hey look at the rules <here - in this file> and keep them" so you dont need to manually repeat yourself again and again.
+This is great but we are careful here because:
+ * Simply I do not feel mature enough the rules and really do not want to end up so far in a state something lives there "under the hood" and we might easily overlook this the automated way as everything happens automagically under the hood. Then do not understand what my agent does and why...
+ * Agents often forget about things like details in contexts can fade. Then it starts to just partially apply things. When I notice that, I can very easily say "Please read again @coding-rules.md" - done.
 
-**Note:** environments like Cursor absolutely allows you to put in rules into some folder like ".cursor/rules" or similar where files are always automatically picked up for each context.
-
-This is great but so far I did not do this. Because simply I do not feel mature enough my rules and I really do not want to end up so far in a state something lives there "under the hood" and I might easily overlook this automated way stuff then do not understand what my agent does and why...
-So for now I just refer to these manually in prompts.
-
+So for now I just refer to these manually in prompts "Please read @coding-rules.md and @docs-rules.md" - done.
 
 # Observations / Conclusions
 
