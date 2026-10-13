@@ -1,4 +1,4 @@
-document version: 1.3
+document version: 1.4
 
 # Iterative development workflow
 
@@ -62,14 +62,42 @@ Please keep BDD pattern (Gherkin language like). Prefer this structure:
 
 Points documented here should be heavily considered when crafting code. Not mandatory, but strongly preferred. If we deviate from these please provide the reason why we do so.
 
-## Internal helper methods.
+## Internal helper methods / shared helpers
 
 We know clean code is cool and normally improves readability. But if we end up in a state we have 100 internal helper methods and 10 public facing real
 methods that's bad because we will drown in number of methods quickly.
 
-Please do NOT introduce internal helpers if:
+Please do NOT introduce an internal or package-level helper if:
 
-- The method is just invoked from one place AND relatively short. Then better to keep the code inline and add a comment inline to the code block.
+- The method is just invoked from **one live (production) call site** AND is relatively short. Prefer inline code with a brief comment on that block.
+- The method is a **pass-through / alias**: it only forwards to another function (especially across packages) with no added logic, validation, or policy.
+  Example of what to avoid: `func defaultX() T { return helper.DefaultX() }` — call `helper.DefaultX()` at the call sites instead.
+- The only reason for the helper is **reuse from tests**. Tests may duplicate a tiny fixture, assert fields directly, or use a `VisibleForTesting_*` (or language equivalent) seam for a real private method — do not invent a shared helper for test convenience.
+
+### Where a helper may live
+
+- **Private in the owning type/package** when the logic belongs to one use-case (one controller, one DAO/parse path, etc.), even if tests need a VisibleForTesting wrapper.
+- **Shared package** (`helper`, `model`, …) only when there are **multiple live call sites in different packages or barriers** (e.g. HTTP + persistence), and the helper encodes a real shared rule — not because “we might need it elsewhere”.
+
+A shared helper that has a single live caller misleads readers into thinking the rule is reused across the system.
+
+### When scanning for compliance
+
+Flag and prefer removing:
+
+1. One-line / pass-through wrappers
+2. Exported helpers with ≤1 live call site outside tests
+3. Helpers used heavily in tests but barely (or never) in production code
+
+## Single ownership of a domain default / policy
+
+When the same default value, normalization, or business policy can be applied in more than one layer (e.g. persistence soft-recovery on missing/corrupt data **and** a controller normalizing an omitted request field), prefer **one clear owner**.
+
+- Put materialization of that default/policy in **one** layer (or one shared domain helper used by that owner).
+- Other layers should either **rely on that owner** (e.g. always read through the DAO that normalizes) or have an **explicit, different barrier reason** documented at the call site — not a second silent copy of the same rule “just in case”.
+- Duplicating the same “apply default X” in controller + DAO (or similar) without a distinct reason smells: readers cannot tell which layer is authoritative, and the copies drift.
+
+Shared factories for the *value* (e.g. `DefaultFoo()`) are fine; scattering the *decision when to apply it* across layers is what to avoid.
 
 ## Logging
 

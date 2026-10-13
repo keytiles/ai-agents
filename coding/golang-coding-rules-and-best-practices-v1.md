@@ -1,4 +1,4 @@
-document version: 1.4
+document version: 1.5
 
 # How to write Go code?
 
@@ -52,6 +52,15 @@ Keep generic logging rules and on top of that keep these too:
 - Prefer lifecycle-oriented debug logs for internals: `started (...)` and `finished (...)` with compact, useful metrics.
 - Avoid duplicate/redundant logs for the same step; one strong signal is better than two weak ones.
 - For shared helper code, pass logger through the method contract early, even if logging is minimal at first, so future diagnostics are easy to add.
+
+### Fault logging ownership
+
+`kt_errors.Fault` values that **bubble up unchanged** should not be logged with ERROR (or equivalent) on every hop (DAO → controller → HTTP/messaging).
+
+- **Log once at the public barrier** that turns the Fault into an outward outcome — e.g. HTTP error mapping (`mapControllerError…` / `NewPublicFaultFromAnyError`) or the messaging consumer/producer that finishes the transaction.
+- Intermediate layers (controllers, DAOs) should **return** the Fault (optionally `AddCallerToCallStack`) and avoid a second full Fault dump when the barrier will log it.
+- If a layer **soft-handles / swallows** a Fault (continues the business transaction), log **at that handling site** (often WARN) — that site is then the barrier for that Fault.
+- Metrics are not a substitute for this rule, and not an excuse to re-introduce deferred “log any Fault” helpers; bump counters next to where the condition is raised if needed.
 - Be explicit with key fields for large or sensitive payloads.
 - Prefer `kt_utils.VarPrinter{TheVar: ...}` in log lines when you want readable dumps **without eager string construction** — the dump is built only when the logger actually formats the `%s` argument (e.g. log level allows emission). Do **not** call `kt_utils.PrintVarS(...)` inline in log argument lists for the same reason.
 - `VarPrinter` works well for small/compact structs when it improves readability and maintainability.
