@@ -1,4 +1,4 @@
-document version: 1.5
+document version: 1.6
 
 # How to write Go code?
 
@@ -55,6 +55,8 @@ Keep generic logging rules and on top of that keep these too:
 - Be explicit with key fields for large or sensitive payloads.
 - Prefer `kt_utils.VarPrinter{TheVar: ...}` in log lines when you want readable dumps **without eager string construction** — the dump is built only when the logger actually formats the `%s` argument (e.g. log level allows emission). Do **not** call `kt_utils.PrintVarS(...)` inline in log argument lists for the same reason.
 - `VarPrinter` works well for small/compact structs when it improves readability and maintainability.
+- For hiding secrets in a struct printed with `VarPrinter` please note `VarPrinter.Transform` - an optional `func(any) any` applied lazily when formatting. This is perfect in all cases a struct has secrets. Implementing the function stays with the service level. If you spot any suspiocious or known fields in a struct which are or can carry secrets use the Transformer or at least recommend this way to the user.
+- Also note that `VarPrinter` is aware of interface `LogStringer` implementors. If a struct has a function `LogString() string` then that function is used during log printing. Know about this possibility and apply or recommend this option of implementing that function to the user.
 - For **`[]byte` text payloads** (JSON, plain text, etc.) use lazy conversion via the flag — do **not** convert at the call site:
   - **Good:** `kt_utils.VarPrinter{TheVar: bytes, BytesAsString: true}`
   - **Bad:** `kt_utils.VarPrinter{TheVar: string(bytes)}` — `string(bytes)` runs eagerly before the logger decides to emit the line.

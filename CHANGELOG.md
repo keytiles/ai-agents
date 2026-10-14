@@ -12,6 +12,9 @@ Full versioning / linking policy: see [README.md](README.md) (“How we version 
 ---
 
 # 2026-10-13
+- Updated [golang-coding-rules-and-best-practices-v1.md](coding/golang-coding-rules-and-best-practices-v1.md) (`document version: 1.6`; VarPrinter has new capabilities like the Transform function and the LogStringer interface for structs. Rules are extended with this knowledge.
+
+# 2026-10-13
 - Updated [generic-coding-rules-and-best-practices-v1.md](coding/generic-coding-rules-and-best-practices-v1.md) (`document version: 1.4`; previous freeze: [generic-coding-rules-and-best-practices-v1.3.md](coding/generic-coding-rules-and-best-practices-v1.3.md)) — **Internal / shared helpers:** forbid pass-through aliases and test-only helpers; shared packages only when multiple live call sites across packages/barriers; compliance scan checklist. **Single ownership of a domain default / policy:** prefer one authoritative layer for when to materialize a shared default/normalization; avoid silent duplicate application across controller + DAO (etc.).
 - Updated [golang-coding-rules-and-best-practices-v1.md](coding/golang-coding-rules-and-best-practices-v1.md) (`document version: 1.5`; previous freeze: [golang-coding-rules-and-best-practices-v1.4.md](coding/golang-coding-rules-and-best-practices-v1.4.md)) — **Fault logging ownership:** log bubbling Faults once at the public barrier (HTTP/messaging); soft-handled Faults log at the handling site; no ERROR dumps on every intermediate hop.
 
