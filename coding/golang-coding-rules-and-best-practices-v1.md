@@ -1,4 +1,4 @@
-document version: 1.6
+document version: 1.7
 
 # How to write Go code?
 
@@ -6,6 +6,47 @@ Please read [generic-coding-rules-and-best-practices-v1.md](generic-coding-rules
 We need to keep all stadards and best practices described there.
 
 On the top of them please also keep the following!
+
+## Named return values
+
+When a function uses **named result parameters** (common for `(…, fault kt_errors.Fault)` / controller methods), treat those names as the only way out:
+
+- **Prefer bare `return`** after assigning named results (or when zero values are already correct).
+- **Do not** write `return nil, nil`, `return "", nil`, `return nil`, etc. that re-state zero values already implied by the named results — it fights the signature and trains bad copy-paste.
+- Soft-success / “nothing found” paths: leave results at zero (`install` stays `nil`, `fault` stays `nil`) and `return`.
+- Error paths: assign `controllerFault = …` (or the named fault result), optionally `AddCallerToCallStack`, then bare `return`.
+- Exception: a **naked** `return value` that is **not** using named results is fine — this rule applies only when the signature already names the results.
+
+```go
+// Good
+func (c *Ctrl) GetX(...) (item *T, controllerFault kt_errors.Fault) {
+	if c.dao == nil {
+		return // item=nil, fault=nil
+	}
+	got, daoFault := c.dao.Get(...)
+	if daoFault != nil {
+		controllerFault = daoFault
+		controllerFault.AddCallerToCallStack(c.fullyQualifiedName, methodName)
+		return
+	}
+	if got == nil {
+		return
+	}
+	item = got
+	return
+}
+
+// Bad — named returns + redundant literals
+func (c *Ctrl) GetX(...) (item *T, controllerFault kt_errors.Fault) {
+	if c.dao == nil {
+		return nil, nil
+	}
+	...
+	return got, nil
+}
+```
+
+Agents: if you introduce or edit a method with named results, **scan every `return` in that function** before finishing — replace redundant result literals with bare `return` / named assignments.
 
 ## Keytiles patterns
 

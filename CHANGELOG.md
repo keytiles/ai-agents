@@ -11,6 +11,9 @@ Full versioning / linking policy: see [README.md](README.md) (“How we version 
 
 ---
 
+# 2026-10-19
+- Updated [golang-coding-rules-and-best-practices-v1.md](coding/golang-coding-rules-and-best-practices-v1.md) (`document version: 1.7`; previous freeze: [golang-coding-rules-and-best-practices-v1.6.md](coding/golang-coding-rules-and-best-practices-v1.6.md)) — **Named return values:** with named results prefer bare `return` / assign-then-return; forbid redundant `return nil, nil` (and similar); agent self-check before finishing.
+
 # 2026-10-13
 - Updated [golang-coding-rules-and-best-practices-v1.md](coding/golang-coding-rules-and-best-practices-v1.md) (`document version: 1.6`; VarPrinter has new capabilities like the Transform function and the LogStringer interface for structs. Rules are extended with this knowledge.
 
