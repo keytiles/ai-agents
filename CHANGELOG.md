@@ -11,6 +11,9 @@ Full versioning / linking policy: see [README.md](README.md) (“How we version 
 
 ---
 
+# 2026-10-31
+- Updated [golang-coding-rules-and-best-practices-v1.md](coding/golang-coding-rules-and-best-practices-v1.md) (`document version: 1.8`; previous freeze: [golang-coding-rules-and-best-practices-v1.7.md](coding/golang-coding-rules-and-best-practices-v1.7.md)) — **Faults:** prefer non-public `NewFaultBuilder` + technical `WithMessageTemplate` + user-safe `WithMessageTemplateForAudience(MSGAUDIENCE_USER, …)` when diagnostics would leak internals or confuse end users; reserve `NewPublicFaultBuilder` for messages that are already client-safe (public Faults pass through the boundary as-is).
+
 # 2026-10-19
 - Updated [golang-coding-rules-and-best-practices-v1.md](coding/golang-coding-rules-and-best-practices-v1.md) (`document version: 1.7`; previous freeze: [golang-coding-rules-and-best-practices-v1.6.md](coding/golang-coding-rules-and-best-practices-v1.6.md)) — **Named return values:** with named results prefer bare `return` / assign-then-return; forbid redundant `return nil, nil` (and similar); agent self-check before finishing.
 

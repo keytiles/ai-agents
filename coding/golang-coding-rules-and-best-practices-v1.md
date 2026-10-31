@@ -1,4 +1,4 @@
-document version: 1.7
+document version: 1.8
 
 # How to write Go code?
 
@@ -66,6 +66,43 @@ This context is typically created on the public barrier (incoming message, incom
 It also can encapsulate a standard Golang Context. And carries important information about the business transaction accross the call chain.
 
 It is a good practice to take `ecntx *kt_tracing.ExecutionContext` parameter into all method signatures so method code is aware and can make logs better - see section "Logging" below!
+
+## Faults (`kt_errors` / lib-errorhandling-golang)
+
+When building Faults that may reach an HTTP/API client (or other public barrier), separate **technical** diagnostics from **user-facing** copy.
+
+### Public Fault vs non-public + user audience
+
+- `NewPublicFaultBuilder(...).WithMessageTemplate(...)` marks the Fault `IsPublic() == true`. The **default** message template is treated as client-safe and is typically returned **as-is** at the boundary (`NewPublicFaultFromAnyError` passes public Faults through). Use this only when that message is already short, actionable, and free of internals (e.g. “channelKey is required”).
+- Prefer **`NewFaultBuilder`** (non-public) when the diagnostic text is technical, or when you would otherwise leak implementation / config / allowlist detail:
+  - `WithMessageTemplate(...)` — operator/dev detail (hosts, codes, causes); ends up in logs when the barrier converts the Fault.
+  - `WithMessageTemplateForAudience(kt_errors.MSGAUDIENCE_USER, ...)` — what the end user should see: **what went wrong** and **what to do next**. No internal host lists, config keys, stack-ish wording, or other implementation leakage.
+- On conversion of a non-public Fault, if `MSGAUDIENCE_USER` is set it becomes the public main message; the technical template is logged with the original Fault. Keep kinds client-meaningful via barrier whitelist options when appropriate (e.g. keep `ValidationFault`).
+- Do **not** put technical allowlist / config / host detail in a `NewPublicFaultBuilder` default message “because ValidationFault is public-ish” — public means the **message** is safe, not only the kind.
+
+```go
+// Good — technical default + user audience (boundary promotes MSGAUDIENCE_USER)
+fault = kt_errors.NewFaultBuilder(kt_errors.ValidationFault).
+	WithMessageTemplate("Teams channelUrl host '{host}' is not in the configured allowlist").
+	WithMessageTemplateForAudience(kt_errors.MSGAUDIENCE_USER,
+		"This Teams channel link is not recognized. Copy the channel link from the Teams app, or provide tenant and channel ids explicitly.").
+	WithLabel("host", host).
+	WithErrorCodes(kt_errors.VALIDATION_ERRCODE_INVALID_VALUE).
+	WithSource(PACKAGE_NAME, methodName).
+	Build()
+
+// Bad — NewPublicFaultBuilder with operator/config wording (surfaces verbatim to the client)
+fault = kt_errors.NewPublicFaultBuilder(kt_errors.ValidationFault).
+	WithMessageTemplate(
+		"Unrecognized Teams channelUrl host — expected a configured Teams deep-link host (e.g. teams.microsoft.com / teams.cloud.microsoft)",
+	).
+	// ...
+	Build()
+```
+
+Library detail: [lib-errorhandling-golang](https://github.com/keytiles/lib-errorhandling-golang) `docs/Fault-v2.0.md`, `docs/PublicFaultConversion-v2.0.md`.
+
+Also follow **Fault logging ownership** under Logging below.
 
 ## Unit test code
 
