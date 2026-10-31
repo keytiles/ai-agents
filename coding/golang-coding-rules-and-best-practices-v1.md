@@ -69,19 +69,42 @@ It is a good practice to take `ecntx *kt_tracing.ExecutionContext` parameter int
 
 ## Faults (`kt_errors` / lib-errorhandling-golang)
 
-When building Faults that may reach an HTTP/API client (or other public barrier), separate **technical** diagnostics from **user-facing** copy.
+When building Faults that may reach an HTTP/API client (or other public barrier), keep **user-facing** copy clear — and only split technical vs user messages when that split earns its keep.
 
 ### Public Fault vs non-public + user audience
 
-- `NewPublicFaultBuilder(...).WithMessageTemplate(...)` marks the Fault `IsPublic() == true`. The **default** message template is treated as client-safe and is typically returned **as-is** at the boundary (`NewPublicFaultFromAnyError` passes public Faults through). Use this only when that message is already short, actionable, and free of internals (e.g. “channelKey is required”).
+- `NewPublicFaultBuilder(...).WithMessageTemplate(...)` marks the Fault `IsPublic() == true`. The **default** message template is treated as client-safe and is typically returned **as-is** at the boundary (`NewPublicFaultFromAnyError` passes public Faults through).
 - Prefer **`NewFaultBuilder`** (non-public) when the diagnostic text is technical, or when you would otherwise leak implementation / config / allowlist detail:
   - `WithMessageTemplate(...)` — operator/dev detail (hosts, codes, causes); ends up in logs when the barrier converts the Fault.
   - `WithMessageTemplateForAudience(kt_errors.MSGAUDIENCE_USER, ...)` — what the end user should see: **what went wrong** and **what to do next**. No internal host lists, config keys, stack-ish wording, or other implementation leakage.
 - On conversion of a non-public Fault, if `MSGAUDIENCE_USER` is set it becomes the public main message; the technical template is logged with the original Fault. Keep kinds client-meaningful via barrier whitelist options when appropriate (e.g. keep `ValidationFault`).
 - Do **not** put technical allowlist / config / host detail in a `NewPublicFaultBuilder` default message “because ValidationFault is public-ish” — public means the **message** is safe, not only the kind.
 
+### Do not overdo the split
+
+The dual-message pattern is for when technical and user text **diverge**. If a slight rewrite makes one message both accurate enough for logs and clear for the user, prefer a **single** `NewPublicFaultBuilder` message. Duplicating nearly identical strings as technical + `MSGAUDIENCE_USER` adds noise without value.
+
+Ask: *Would an operator learn something from the technical template that the user message must not say?* If no → one public message is enough.
+
 ```go
-// Good — technical default + user audience (boundary promotes MSGAUDIENCE_USER)
+// Good — one public message (already clear; no useful technical/user divergence)
+fault = kt_errors.NewPublicFaultBuilder(kt_errors.ValidationFault).
+	WithMessageTemplate(
+		"The channel link is not a valid URL. Paste a full https link from Slack.",
+	).
+	WithErrorCodes(kt_errors.VALIDATION_ERRCODE_INVALID_VALUE).
+	WithSource(PACKAGE_NAME, methodName).
+	Build()
+
+// Unnecessary overkill — same idea twice
+fault = kt_errors.NewFaultBuilder(kt_errors.ValidationFault).
+	WithMessageTemplate("channelUrl is not a valid absolute URL").
+	WithMessageTemplateForAudience(kt_errors.MSGAUDIENCE_USER,
+		"The channel link is not a valid URL. Paste a full https link from Slack.").
+	// ...
+	Build()
+
+// Good — split when technical detail must stay out of the client message
 fault = kt_errors.NewFaultBuilder(kt_errors.ValidationFault).
 	WithMessageTemplate("Teams channelUrl host '{host}' is not in the configured allowlist").
 	WithMessageTemplateForAudience(kt_errors.MSGAUDIENCE_USER,
